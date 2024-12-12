@@ -8,6 +8,12 @@ DU=`df --total | grep total | awk '{printf "%d/%dGb (%d%%)\n", $3 / 1000, $2 / 1
 cpul=`top -bn1 | grep "Cpu(s)" | awk '{print $7}' | cut -d, -f2 | awk '{printf "%.1f%%\n", 100 - $1}'`
 LB=`who -b | awk '{print $3" "$4}'`
 lvmu=`lsblk | grep lvm -q && echo "yes" || echo "no"`
+ctcp=`netstat -t | awk 'NR > 2' | wc  -l`
+ul=`who -u | wc -l`
+ip=`hostname -I`
+mac=`ip a | grep ether | awk '{printf "(%s)\n", $2}'`
+exc=`journalctl _COMM=sudo -q | grep COMMAND | wc -l`
+
 wall "	#Architecture: $arc
 	#CPU physical : $cpup
 	#vCPU : $vcpu
@@ -16,7 +22,7 @@ wall "	#Architecture: $arc
 	#CPU load: $cpul
 	#Last boot: $LB
 	#LVM use: $lvmu
-	#Connections TCP : 1 ESTABLISHED
-	#User log: 1
-	#Network: IP 10.0.2.15 (08:00:27:51:9b:a5)
-	#Sudo : 42 cmd"
+	#Connections TCP : $ctcp ESTABLISHED
+	#User log: $ul
+	#Network: IP $ip$mac
+	#Sudo : $exc cmd"
